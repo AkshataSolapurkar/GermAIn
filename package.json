@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
+    "@react-native-community/netinfo": "^11.4.1",
     "@react-native-picker/picker": "^2.9.0",
     "@react-navigation/native": "^7.0.0",
     "appwrite": "^16.0.2",
@@ -35,6 +36,7 @@
     "react-native": "0.74.5",
     "react-native-appwrite": "^0.5.0",
     "react-native-document-picker": "^9.3.1",
+    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-paper": "^5.12.5",
     "react-native-picker-select": "^9.3.1",

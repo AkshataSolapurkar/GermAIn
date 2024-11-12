@@ -1,32 +1,37 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
-import RNPickerSelect from 'react-native-picker-select'; // Import react-native-picker-select
-import { Checkbox } from 'react-native-paper'; // Import Checkbox from react-native-paper
+import RNPickerSelect from 'react-native-picker-select';
+import { Checkbox } from 'react-native-paper';
 import { saveFormData } from '@/services/context/initial-formcontext';
 import { useAuth } from '@/services/context/AuthContext';
-import { useRouter } from 'expo-router'; // Assuming you have AuthContext for user session
+import { useRouter } from 'expo-router';
 
 const HealthForm = () => {
-  const router = useRouter()
+  const router = useRouter();
   const [age, setAge] = useState('');
   const [profession, setProfession] = useState('');
   const [jobHours, setJobHours] = useState('');
   const [checkupFrequency, setCheckupFrequency] = useState('');
-  const [report, setLatestReport] = useState(null);
+  const [report, setLatestReport] = useState<DocumentPickerResponse | null>(null);
   const [clinicalIssues, setClinicalIssues] = useState('');
   const [periodDates, setPeriodDates] = useState('');
   const [regularity, setPeriodRegularity] = useState(false);
   const [reportVerified, setReportVerified] = useState(false);
 
-  const { user } = useAuth(); // Get the user session
-  
+  const { user } = useAuth();
+
   const handleFileUpload = async () => {
     try {
       const result = await DocumentPicker.pick({
         type: [DocumentPicker.types.allFiles],
       });
-      setLatestReport(result);
+
+      // Check if the result is valid
+      if (result && result[0]) {
+        console.log("Selected file details:", result[0]);
+        setLatestReport(result[0]); // Set the file as the report
+      }
     } catch (error) {
       console.warn('File selection canceled', error);
     }
@@ -38,20 +43,35 @@ const HealthForm = () => {
       return;
     }
 
-    // Call the function to store data in Appwrite
-    await saveFormData({
+    // Check if the file is correctly set before submitting
+    if (!report) {
+      alert("Please upload a report file.");
+      return;
+    }
+
+    // Log report to verify structure
+    console.log("Report to be saved:", report);
+
+    // Prepare data for saving
+    const formData = {
       age,
       profession,
       jobHours,
       checkupFrequency,
-      report,
+      latestReport: report,  // Ensure report is passed correctly
       clinicalIssues,
       periodDates,
       regularity,
       reportVerified,
-    });
-    router.push("/(dashpage)/dashboard")
-    
+    };
+
+    // Call the saveFormData function
+    try {
+      await saveFormData(formData);
+      router.push("/(dashpage)/dashboard");
+    } catch (error) {
+      console.error("Error saving form data:", error);
+    }
   };
 
   return (
@@ -71,7 +91,7 @@ const HealthForm = () => {
           { label: 'Other', value: 'other' },
         ]}
       />
-      
+
       {profession === 'other' && (
         <TextInput placeholder="Please specify" onChangeText={setProfession} />
       )}

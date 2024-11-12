@@ -3,26 +3,43 @@ import { ID } from 'appwrite';
 
 export const saveFormData = async (formData: any) => {
   try {
-    // Upload the report file to Appwrite Storage if it exists
+
     let reportFileId = '';
+
     if (formData.latestReport) {
       const file = formData.latestReport;
-      const fileId = ID.unique();
-      const reportUpload = await storage.createFile('67323ce8001f56508367', fileId, file);
-      reportFileId = fileId;
+
+      console.log('Uploading file:', file);
+
+      try {
+        const fileId = ID.unique();
+        const reportUpload = await storage.createFile(
+          '67323ce8001f56508367',
+          fileId,                 
+          file,           
+        );
+
+        reportFileId = reportUpload.$id;
+        console.log('File uploaded successfully with ID:', reportFileId);
+      } catch (uploadError) {
+        console.error('Error uploading file:', uploadError);
+        alert('Failed to upload file.');
+        return;
+      }
+    } else {
+      console.warn('No file found for latestReport in formData.');
     }
 
-    // Save form data as a new document in Appwrite database
     const newDocument = await databases.createDocument(
       '67322db0002747477ca7',
-      '67322dc600131bf5b628',
+      '67322dc600131bf5b628', 
       ID.unique(),
       {
         age: parseInt(formData.age, 10),
         profession: formData.profession,
-        jobHours: parseInt(formData.jobHours) ,
+        jobHours: parseInt(formData.jobHours, 10),
         checkupFrequency: formData.checkupFrequency,
-        report : reportFileId,
+        report: reportFileId, 
         clinicalIssues: formData.clinicalIssues,
         periodDates: formData.periodDates,
         regularity: formData.regularity,
