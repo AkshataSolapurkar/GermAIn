@@ -67,7 +67,8 @@ const HealthForm = () => {
 
     // Call the saveFormData function
     try {
-      await saveFormData(formData);
+      await saveFormData(formData, user.id);
+      console.log(user.id,"this is id")
       router.push("/(dashpage)/dashboard");
     } catch (error) {
       console.error("Error saving form data:", error);

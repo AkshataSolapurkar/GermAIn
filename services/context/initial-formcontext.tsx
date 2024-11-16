@@ -1,7 +1,7 @@
 import { databases, storage } from '@/services/context/AuthContext';
 import { ID } from 'appwrite';
 
-export const saveFormData = async (formData: any) => {
+export const saveFormData = async (formData: any,userId: string) => {
   try {
 
     let reportFileId = '';
@@ -21,6 +21,8 @@ export const saveFormData = async (formData: any) => {
 
         reportFileId = reportUpload.$id;
         console.log('File uploaded successfully with ID:', reportFileId);
+
+        
       } catch (uploadError) {
         console.error('Error uploading file:', uploadError);
         alert('Failed to upload file.');
@@ -33,7 +35,7 @@ export const saveFormData = async (formData: any) => {
     const newDocument = await databases.createDocument(
       '67322db0002747477ca7',
       '67322dc600131bf5b628', 
-      ID.unique(),
+      userId,
       {
         age: parseInt(formData.age, 10),
         profession: formData.profession,
