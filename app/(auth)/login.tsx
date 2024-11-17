@@ -1,11 +1,10 @@
-// src/screens/Login.tsx
 import React, { useState } from 'react';
-import { Button, TextInput, View, Text, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useAuth } from '@/services/context/AuthContext';
 import { Link, useRouter } from 'expo-router';
 
-const Login = ({ navigation }: any) => {
-  const router = useRouter()
+const Login = () => {
+  const router = useRouter();
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +12,7 @@ const Login = ({ navigation }: any) => {
   const handleLogin = async () => {
     try {
       await login(email, password);
-      router.push("/(dashpage)/dashboard")
+      router.push("/(dashpage)/dashboard");
     } catch (error) {
       console.log('Login failed', error);
     }
@@ -21,28 +20,49 @@ const Login = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Welcome Back!</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        secureTextEntry
-        onChangeText={setPassword}
-      />
-      <Button title="Login" onPress={handleLogin} />
+      <View style={styles.headerContainer}>
+        <Text style={styles.welcomeText}>Welcome to</Text>
+        <Text style={styles.brandText}>GermAIn</Text>
+        <Text style={styles.subtitleText}>
+          AI Nutritionist! We believe nutrition is in the diet.
+          So a diet plan for all your nutrition needs.
+        </Text>
+      </View>
 
-      <Link href={'/(auth)/signup'}>
-      <Text style={styles.signupText}>
-        Don't have an account? Sign up
-      </Text>
-      </Link>
-      
+      <View style={styles.formContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email Address"
+          placeholderTextColor="#666"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#666"
+          value={password}
+          secureTextEntry
+          onChangeText={setPassword}
+        />
+
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          <Text style={styles.loginButtonText}>Sign In</Text>
+        </TouchableOpacity>
+
+        <Link href={'/(auth)/signup'} style={styles.signupContainer}>
+          <Text style={styles.signupText}>
+            Don't have an account? <Text style={styles.signupLink}>Sign up</Text>
+          </Text>
+        </Link>
+      </View>
+
+      {/* Image is outside the container but still on the screen */}
+      <Image
+        source={require('../../assets/images/loginimage.png')} // Replace 'your-image.png' with the actual file name
+        style={styles.bottomRightImage}
+      />
     </View>
   );
 };
@@ -50,30 +70,74 @@ const Login = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center', // Centers vertically
-    alignItems: 'center', // Centers horizontally
-    padding: 16,
-    backgroundColor: '#f5f5f5', // Optional background color
+    backgroundColor: '#fff',
+    overflow: 'hidden',
   },
-  header: {
+  headerContainer: {
+    paddingHorizontal: 24,
+    paddingTop: 30,
+    paddingBottom: 10,
+  },
+  welcomeText: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 32, // Space between header and inputs
     color: '#333',
+    marginBottom: 8,
+  },
+  brandText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#0066FF',
+    marginBottom: 12,
+  },
+  subtitleText: {
+    fontSize: 16,
+    color: '#666',
+    lineHeight: 24,
+    maxWidth: '80%',
+  },
+  formContainer: {
+    padding: 24,
+
   },
   input: {
-    width: '100%',
-    padding: 12,
-    marginVertical: 8,
+    backgroundColor: '#f5f8ff',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 16,
+    fontSize: 14,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    backgroundColor: '#fff',
+    borderColor: '#e0e7ff',
+  },
+  loginButton: {
+    backgroundColor: '#0066FF',
+    borderRadius: 12,
+    padding: 10,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  signupContainer: {
+    marginTop: 24,
+    alignItems: 'center',
   },
   signupText: {
-    marginTop: 16,
-    color: '#007bff',
-    textDecorationLine: 'underline',
+    fontSize: 14,
+    color: '#666',
+  },
+  signupLink: {
+    color: '#0066FF',
+    fontWeight: '600',
+  },
+  bottomRightImage: {
+    position: 'absolute',
+    bottom: 10,
+    right: 0,  
+    width: 200, 
+    height: 200, 
   },
 });
 
